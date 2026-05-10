@@ -9,10 +9,7 @@ Project work from Full Stack Development I
 
 
 ## About
-This repo shows a collection of work blank .
-
-## Motivation
-To show the work done in CS-465 Full Stack Development I from SNHU.
+This branch shows a collection of work for module 1.
 
 ## Getting Started
 Setup is done via `git clone url`.
@@ -28,72 +25,33 @@ Installation best via a system level package manager or ephemeral build environm
 Transitvie dependecies such as language are shown via tree level.
 
 - git
-- 
+- node
+- express-generator
 
-## Reflection
+### Launch Local Project 
+After running commands below view via **http://localhost:3000/**
 
-### question 1
-
-### question 2 
-
-## Design Overview
-
-<details>
-<summary>Click to see</summary>
-
-### Code Examples
-
-#### file 1
-
-<details>
-<summary>Click to see</summary>
-
-```txt
-blank
-```
-</details>
-
-#### file 2
-
-<details>
-<summary>Click to see</summary>
-
-```txt
-blank
+```bash
+npm install
+npm audit
+npm start
 ```
 
-</details>
+## Resolved Issues
+Used npx to run express-generator rather than **npm install -g**.
+Resolved frontend issue with missing style for website by renaming directory stylesheets to css.
 
-#### Unit Test
+## Project Structure 
+express-generator was ran in repo root and moved assets into repectrive locations.
 
-<details>
-<summary>Click to see</summary>
+- **app.js** The entry point for express
+- **bin/www** Server startup script
+- **routes/** Backend routing logic
+- **public/** Static frontend
+- **views/** Template views from handlebars
 
-```txt
-blank
-```
-
-</details>
-
-#### Integration Test
-
-<details>
-<summary>Click to see</summary>
-
-```txt
-blank
-```
-
-</details>
-
-</details>
-
-### Screenshots of Application
+### Screenshot of Server Running
 
 <div align="center">
-  <img src="screenshots/screenshot_1.png" width="100%" alt="img">
-</div>
-
-<div align="center">
-  <img src="screenshots/screenshot_2.png" width="100%" alt="img">
+  <img src="screenshot1.png" width="100%" alt="img">
 </div>

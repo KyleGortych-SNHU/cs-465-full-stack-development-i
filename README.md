@@ -1,6 +1,6 @@
 <div align="right">
  
-![GitHub Action Badge](https://img.shields.io/github/actions/workflow/status/KyleGortych-SNHU/cs-465-full-stack-development-i/main.yml?label=main)
+![GitHub Action Badge](https://img.shields.io/github/actions/workflow/status/KyleGortych-SNHU/cs-465-full-stack-development-i/main.yml?branch=main&label=main)
 
 </div>
 

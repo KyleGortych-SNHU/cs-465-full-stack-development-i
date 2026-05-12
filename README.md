@@ -1,6 +1,6 @@
 <div align="right">
  
-![Module 1 CI](https://img.shields.io/github/actions/workflow/status/KyleGortych-SNHU/cs-465-full-stack-development-i/main.yml?branch=module1&label=module1)
+![Module 1 CI](https://img.shields.io/github/actions/workflow/status/KyleGortych-SNHU/cs-465-full-stack-development-i/main.yml?branch=module2&label=module2)
 
 </div>
 
@@ -9,7 +9,7 @@ Project work from Full Stack Development I
 
 
 ## About
-This branch shows a collection of work for module 1.
+This branch shows a collection of work for module 2.
 
 ## Getting Started
 Setup is done via `git clone url`.
@@ -41,16 +41,9 @@ npm start
 Used npx to run express-generator rather than **npm install -g**.
 Resolved frontend issue with missing style for website by renaming directory stylesheets to css.
 
-## Project Structure 
-express-generator was ran in repo root and moved assets into repectrive locations.
+## Project Structure change for MVC routing
 
-- **app.js** The entry point for express
-- **bin/www** Server startup script
-- **routes/** Backend routing logic
-- **public/** Static frontend
-- **views/** Template views from handlebars
-
-### Screenshot of Server Running
+### Screenshot of blank
 
 <div align="center">
   <img src="screenshot1.png" width="100%" alt="img">

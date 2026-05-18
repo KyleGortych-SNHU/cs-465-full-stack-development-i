@@ -1,7 +1,7 @@
 name: Module 2 CI
 
 on:
-  workflow_dispatch: # change to push when ready
+  push:
     branches:
       - module2
     paths-ignore:
@@ -12,24 +12,18 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repo
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: 20
 
-      - name: Install dependencies
-        run: npm install
+      - run: npm ci
 
-      - name: Start server in background
-        run: |
+      - run: |
           npm start &
-          sleep 5
+          npx wait-on http://localhost:3000/health
 
-      - name: Server check
-        run: curl -f http://localhost:3000/health
-
-      - name: Check CSS path reachable
-        run: curl -f http://localhost:3000/css/style.css
+      - run: curl -f http://localhost:3000/health
+      - run: curl -f http://localhost:3000/
+      - run: curl -f http://localhost:3000/travel

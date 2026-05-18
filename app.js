@@ -3,6 +3,7 @@ let express = require('express');
 let path = require('path');
 let cookieParser = require('cookie-parser');
 let logger = require('morgan');
+let handlebars = require('bhs');
 
 let indexRouter = require('/app_server/routes/index');
 let usersRouter = require('/app_server/routes/users');
@@ -13,6 +14,9 @@ let app = express();
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'hbs');
+
+// register handlebars partials
+handlebars.registerPartials(__dirname + '/app_server/view/partials');
 
 app.use(logger('dev'));
 app.use(express.json());

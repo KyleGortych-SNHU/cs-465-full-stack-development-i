@@ -1,9 +1,9 @@
-name: Module 2 CI
+name: Module 3 CI
 
 on:
-  push:
+  workflow_dispatch: # switch to push later
     branches:
-      - module2
+      - module3
     paths-ignore:
       - README.md
 

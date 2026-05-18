@@ -1,6 +1,6 @@
 <div align="right">
  
-![Module 1 CI](https://img.shields.io/github/actions/workflow/status/KyleGortych-SNHU/cs-465-full-stack-development-i/main.yml?branch=module2&label=module2)
+![Module 1 CI](https://img.shields.io/github/actions/workflow/status/KyleGortych-SNHU/cs-465-full-stack-development-i/main.yml?branch=module3&label=module3)
 
 </div>
 
@@ -9,7 +9,7 @@ Project work from Full Stack Development I
 
 
 ## About
-This branch shows a collection of work for module 2.
+This branch shows a collection of work for module 3.
 
 ## Getting Started
 Setup is done via `git clone url`.
@@ -38,10 +38,8 @@ npm start
 ```
 
 ## Resolved Issues
-N/A
 
 ## Changes
-Added layouts directory in views. Moved header and footer into respective partials hbs files.
 
 ### Screenshot of Rendered Content
 

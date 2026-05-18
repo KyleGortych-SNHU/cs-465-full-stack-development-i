@@ -38,12 +38,12 @@ npm start
 ```
 
 ## Resolved Issues
-Used npx to run express-generator rather than **npm install -g**.
-Resolved frontend issue with missing style for website by renaming directory stylesheets to css.
+N/A
 
-## Project Structure change for MVC routing
+## Changes
+Added layouts directory in views. Moved header and footer into respective partials hbs files.
 
-### Screenshot of blank
+### Screenshot of Rendered Content
 
 <div align="center">
   <img src="screenshot1.png" width="100%" alt="img">

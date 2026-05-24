@@ -1,6 +1,6 @@
 <div align="right">
  
-![Module 1 CI](https://img.shields.io/github/actions/workflow/status/KyleGortych-SNHU/cs-465-full-stack-development-i/main.yml?branch=module3&label=module3)
+![Module 4 CI](https://img.shields.io/github/actions/workflow/status/KyleGortych-SNHU/cs-465-full-stack-development-i/main.yml?branch=module4&label=module4)
 
 </div>
 
@@ -9,7 +9,7 @@ Project work from Full Stack Development I
 
 
 ## About
-This branch shows a collection of work for module 3.
+This branch shows a collection of work for module 4.
 
 ## Getting Started
 Setup is done via `git clone url`.
@@ -38,7 +38,6 @@ npm start
 ```
 
 ## Resolved Issues
-Changed old links to static html file to rendered handlebars.
 
 ## Changes
 
@@ -46,10 +45,4 @@ Changed old links to static html file to rendered handlebars.
 
 <div align="center">
   <img src="screenshot1.png" width="100%" alt="img">
-</div>
-
-### Screenshot of routing test
-
-<div align="center">
-  <img src="screenshot2.png" width="100%" alt="img">
 </div>

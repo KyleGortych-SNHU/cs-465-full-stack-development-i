@@ -1,26 +1,13 @@
-# Small secure base image
-FROM node:18-slim
+FROM node:20
 
-# App directory
-WORKDIR /usr/src/app
+WORKDIR /app
 
-# Copy package files first for better caching
-COPY --chown=node:node package.json package-lock.json ./
+COPY package.json package-lock.json ./
 
-# Non-root user
-USER node
+RUN npm install
 
-# Install dependencies cleanly
-RUN npm ci --omit=dev
+COPY . .
 
-# Copy app source
-COPY --chown=node:node . .
-
-# Production mode
-ENV NODE_ENV=production
-
-# App listens on 3000
 EXPOSE 3000
 
-# Start app
-CMD ["node", "./bin/www"]
+CMD ["npm", "start"]

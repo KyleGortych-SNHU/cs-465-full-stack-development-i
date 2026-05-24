@@ -38,6 +38,7 @@ npm start
 ```
 
 ## Resolved Issues
+Changed old links to static html file to rendered handlebars.
 
 ## Changes
 
@@ -45,4 +46,10 @@ npm start
 
 <div align="center">
   <img src="screenshot1.png" width="100%" alt="img">
+</div>
+
+### Screenshot of routing test
+
+<div align="center">
+  <img src="screenshot2.png" width="100%" alt="img">
 </div>

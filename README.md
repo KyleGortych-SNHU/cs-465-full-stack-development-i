@@ -41,7 +41,7 @@ npm start
 
 ## Changes
 
-### Screenshot of Rendered Content
+### Screenshot of Created Records Using seed.js
 
 <div align="center">
   <img src="screenshot1.png" width="100%" alt="img">

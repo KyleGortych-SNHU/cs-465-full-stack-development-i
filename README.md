@@ -1,6 +1,6 @@
 <div align="right">
  
-![Module 4 CI](https://img.shields.io/github/actions/workflow/status/KyleGortych-SNHU/cs-465-full-stack-development-i/main.yml?branch=module4&label=module4)
+![Module 4 CI](https://img.shields.io/github/actions/workflow/status/KyleGortych-SNHU/cs-465-full-stack-development-i/main.yml?branch=module5&label=module5)
 
 </div>
 
@@ -9,7 +9,7 @@ Project work from Full Stack Development I
 
 
 ## About
-This branch shows a collection of work for module 4.
+This branch shows a collection of work for module 5.
 
 ## Getting Started
 Setup is done via `git clone url`.

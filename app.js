@@ -8,6 +8,10 @@ let handlebars = require('hbs');
 let indexRouter = require('./app_server/routes/index');
 let usersRouter = require('./app_server/routes/users');
 let travelRouter = require('./app_server/routes/travel');
+let apiRouter = require('./app_api/routes/index');
+
+// connects to DB
+require('./app_api/models/db');
 
 let app = express();
 
@@ -27,6 +31,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/travel', travelRouter);
+app.use('/api', apiRouter); // wires up API routes
 
 // for git action CI testing
 app.get('/health', (req, res) => {

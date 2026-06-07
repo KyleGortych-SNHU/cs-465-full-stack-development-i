@@ -41,8 +41,20 @@ npm start
 
 ## Changes
 
-### Screenshot of Created Records Using seed.js
+### Screenshot of successful endpoint response listing all trip records returned by tripsList controller
 
 <div align="center">
   <img src="screenshot1.png" width="100%" alt="img">
+</div>
+
+### Screenshot of successful endpoint response listing a trip records returned by tripsFindByCode controller
+
+<div align="center">
+  <img src="screenshot2.png" width="100%" alt="img">
+</div>
+
+### Screenshot of clicking image shows record of trip
+
+<div align="center">
+  <img src="screenshot3.png" width="100%" alt="img">
 </div>

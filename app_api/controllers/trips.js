@@ -76,6 +76,58 @@ const tripsList = async(req, res) => {
   }
 };
 
+/**
+ * Similar to tripsList but, uses filter to,
+ * GET /trip/:tripCode lists single trip 
+ *
+ * Preconditions:
+ *   - req and res are valid Express request/response objects.
+ *   - MongoDB connection has been established.
+ *   - The "trips" model is registered with Mongoose.
+ *
+ * Postconditions:
+ *   - Returns HTTP 200 and a JSON array of trips when records exist.
+ *   - Returns HTTP 404 if no trip data is found.
+ *   - Response is sent exactly once.
+ *
+ * Exceptions:
+ *   - TODO: Implement try/catch handling for database and 
+ *     server errors and return HTTP 500 response.
+ *
+ * Side Effects:
+ *   - Executes a database query against the trips collection.
+ *
+ * @async
+ * @function tripsList
+ * @param {Object} req - Express request object.
+ * @param {Object} res - Express response object.
+ * @returns {Promise<void>}
+ */
+const tripsFindByCode = async(req, res) => {
+  const q = await Model
+    .find({'code' : req.params.tripCode })
+    .exec();
+
+  // uncomment to see results of querey
+  // on the console
+  // console.log(q);
+  
+  // if database returns no data
+  // TODO: apply || q.length === 0 as .find({}) returns not null but empty array
+  if(!q) {
+    return res
+        .status(404)
+        // TODO: replace with better error ahndling
+        // switch to .json({message: 'No trips found'})
+        .json(err); 
+  } else {
+    return res
+        .status(200)
+        .json(q);
+  }
+};
+
 module.exports = {
-  tripsList
+  tripsList,
+  tripsFindByCode
 };

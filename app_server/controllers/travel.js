@@ -1,8 +1,6 @@
 //let fs = require('fs');
 //let trips = JSON.parse(fs.readFileSync('./data/trips.json', 'utf8'));
 
-const { json } = require("express");
-
 const tripsEndpoint = "http://localhost:3000/api/trips";
 const options = {
   method: "GET",
@@ -17,7 +15,16 @@ const travel = async function (req, res, next) {
   await fetch(tripsEndpoint, options)
       .then((res) => res.json())
       .then((json) => {
-        res.render('travel', {title: 'Travlr Getaways', trips});
+        let message = null;
+        if(!(json instanceof Array)) {
+          message = "API lookup error";
+          json = [];
+        } else {
+          if(!json.length) {
+            message = "No trips exist in the database.";
+          }
+        }
+        res.render("travel", {title: "Travlr Getaways", trips: json, message});
       })
       .catch((err) => res.status(500).send(err.message));
 };

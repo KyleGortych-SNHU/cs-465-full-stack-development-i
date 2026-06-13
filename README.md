@@ -38,6 +38,7 @@ npm start
 ```
 
 ## Resolved Issues
+use npx to run local node packages angular/cli and blank
 
 ## Changes
 

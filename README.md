@@ -42,9 +42,14 @@ use npx to run local node packages angular/cli and blank
 
 ## Changes
 
-### Screenshot of 
+### Screenshot of testing post
 
 <div align="center">
   <img src="screenshot1.png" width="100%" alt="img">
 </div>
 
+### Screenshot of result in database 
+
+<div align="center">
+  <img src="screenshot2.png" width="100%" alt="img">
+</div>

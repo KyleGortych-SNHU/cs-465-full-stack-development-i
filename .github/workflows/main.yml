@@ -1,9 +1,9 @@
-name: Module 6 CI
+name: Module 7 CI
 
 on:
   workflow_dispatch:
   # push:
-  #   branches: [module5]
+  #   branches: [module7]
   #   paths-ignore:
   #     - 'README.md'
 

@@ -1,6 +1,6 @@
 <div align="right">
  
-![Module 6 CI](https://img.shields.io/github/actions/workflow/status/KyleGortych-SNHU/cs-465-full-stack-development-i/main.yml?branch=module6&label=module6)
+![Module 7 CI](https://img.shields.io/github/actions/workflow/status/KyleGortych-SNHU/cs-465-full-stack-development-i/main.yml?branch=module7&label=module7)
 
 </div>
 
@@ -9,7 +9,7 @@ Project work from Full Stack Development I
 
 
 ## About
-This branch shows a collection of work for module 6.
+This branch shows a collection of work for module 7.
 
 ## Getting Started
 Setup is done via `git clone url`.
@@ -42,14 +42,8 @@ use npx to run local node packages angular/cli and blank
 
 ## Changes
 
-### Screenshot of testing post
+### Screenshot of
 
 <div align="center">
   <img src="screenshot1.png" width="100%" alt="img">
-</div>
-
-### Screenshot of result in database 
-
-<div align="center">
-  <img src="screenshot2.png" width="100%" alt="img">
 </div>

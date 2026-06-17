@@ -8,8 +8,8 @@ import { TripDataService } from '../services/trip-data';
   selector: 'app-add-trip',
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule],
-  templateUrl: './add-trip.component.html',
-  styleUrl: './add-trip.component.css'
+  templateUrl: './add-trip.html',
+  styleUrl: './add-trip.css'
 })
 
 export class AddTripComponent implements OnInit {

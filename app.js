@@ -13,6 +13,9 @@ let apiRouter = require('./app_api/routes/index');
 // connects to DB
 require('./app_api/models/db');
 
+// add .env file
+require('dotenv').config();
+
 let app = express();
 
 // view engine setup

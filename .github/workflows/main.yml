@@ -1,4 +1,4 @@
-name: Module 7 CI
+name: Module 7 CI Entry Point
 
 on:
   workflow_dispatch:
@@ -8,96 +8,11 @@ on:
   #     - 'README.md'
 
 jobs:
-  ci:
-    runs-on: ubuntu-latest
+  backend:
+    uses: ./.github/workflows/backend.yml
 
-    services:
-      mongodb:
-        image: mongo:7
-        ports:
-          - 27017:27017
-        options: >-
-          --health-cmd "mongosh --quiet --eval 'db.runCommand({ ping: 1 })'"
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
+  frontend:
+    uses: ./.github/workflows/frontend.yml
 
-    env:
-      DB_HOST: 127.0.0.1
-      NODE_ENV: test
-
-    steps:
-      - uses: actions/checkout@v4
-
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          cache: npm
-
-      - name: Install dependencies
-        run: npm ci
-
-      # Static checks 
-
-      - name: Lint (skipped if no ESLint config)
-        if: hashFiles('.eslintrc.json', '.eslintrc.js', 'eslint.config.js') != ''
-        run: npx eslint . --ext .js
-
-      - name: Audit dependencies (high+ severity)
-        run: npm audit --audit-level=high
-        continue-on-error: true
-
-      # Unit tests
-
-      - name: Unit tests
-        run: npm run test:unit --if-present
-
-      # Integration tests for seed real Mongo to verify documents land
-
-      - name: Wait for MongoDB to accept connections
-        run: |
-          for i in {1..30}; do
-            (echo > /dev/tcp/127.0.0.1/27017) >/dev/null 2>&1 && break
-            sleep 1
-          done
-
-      - name: Run seed script
-        run: node app_server/models/seed.js
-
-      - name: Verify seed data landed in MongoDB
-        run: |
-          node -e "
-            const m = require('mongoose');
-            (async () => {
-              await m.connect('mongodb://127.0.0.1:27017/travlr');
-              const Trip = require('./app_server/models/travlr');
-              const count = await Trip.countDocuments();
-              console.log('Trip count after seed:', count);
-              if (count < 1) {
-                console.error('Seed produced zero documents');
-                process.exit(1);
-              }
-              await m.disconnect();
-            })().catch(e => { console.error(e); process.exit(1); });
-          "
-
-      - name: Integration tests
-        run: npm run test:integration --if-present
-
-      # Smoke tests server boots and pages render
-
-      - name: Start server
-        run: |
-          npm start &
-          npx wait-on http://127.0.0.1:3000 --timeout 30000
-
-      - name: Home page responds
-        run: curl --fail --silent http://127.0.0.1:3000/ > /dev/null
-
-      - name: /travel renders Handlebars view with trips
-        run: |
-          body=$(curl --fail --silent http://127.0.0.1:3000/travel)
-          echo "$body" | grep -qF "Gale Reef" || {
-            echo "Trip data missing — hbs did not render"
-            exit 1
-          }
+  docker:
+    uses: ./.github/workflows/docker.yml

@@ -26,10 +26,11 @@ Transitvie dependecies such as language are shown via tree level.
 
 - git
 - node
+- Docker
 - express-generator
 
-### Launch Local Project 
-After running commands below view via **http://localhost:3000/**
+### Launch Project without container
+After running commands below view via **http://localhost:3000/** or **http://localhost:4200/**
 
 ```bash
 npm install
@@ -37,8 +38,15 @@ npm audit
 npm start
 ```
 
+### Launch Project via Docker
+After running commands below view via **http://localhost:3000/** or **http://localhost:4200/**
+
+```bash
+docker compose up --build
+```
+
 ## Resolved Issues
-use npx to run local node packages angular/cli and blank
+
 
 ## Changes
 

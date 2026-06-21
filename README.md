@@ -50,8 +50,20 @@ docker compose up --build
 
 ## Changes
 
-### Screenshot of
+### Screenshot of register endpoint
 
 <div align="center">
-  <img src="screenshot1.png" width="100%" alt="img">
+  <img src="./register.png" width="100%" alt="img">
+</div>
+
+### Screenshot of login endpoint
+
+<div align="center">
+  <img src="./login.png" width="100%" alt="img">
+</div>
+
+### Screenshot of Verifying via Terminal
+
+<div align="center">
+  <img src="./curl_check_user.png" width="100%" alt="img">
 </div>

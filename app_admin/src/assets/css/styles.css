@@ -1,1 +1,110 @@
-/* You can add global styles to this file, and also import other style files */
+/* Travlr Getaways Admin global theme
+ * Theme match with public site style.css
+ * Loaded via angular.json ("styles": ["src/assets/css/styles.css"]).
+ */
+
+:root {
+  --travlr-teal-deep: #316e66;
+  --travlr-teal:      #2c9688;
+  --travlr-brown:     #5a4535;
+  --travlr-sand:      #ac9e94;
+  --travlr-amber:     #ffb744;
+  --travlr-cream:     #faf6ef;
+  --travlr-ink:       #3a2e23;
+
+  --travlr-display: Georgia, "Times New Roman", Times, serif;
+  --travlr-body: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+body {
+  background-color: var(--travlr-cream);
+  color: var(--travlr-ink);
+  font-family: var(--travlr-body);
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--travlr-display);
+  color: var(--travlr-teal-deep);
+  letter-spacing: 0.02em;
+}
+h1, h2 { text-transform: uppercase; }
+
+a { color: var(--travlr-teal); }
+a:hover { color: var(--travlr-teal-deep); }
+
+.container { padding-top: 1.5rem; padding-bottom: 3rem; }
+
+/* Sticky footer layout */
+html, body { height: 100%; }
+app-root {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+app-root > .container { flex: 1 0 auto; }
+.site-footer { flex-shrink: 0; }
+
+.bg-travlr { background-color: var(--travlr-teal-deep) !important; }
+
+.navbar.bg-travlr .navbar-brand,
+.navbar.bg-travlr .nav-link { color: #f3efe4; }
+.navbar.bg-travlr .nav-link:hover,
+.navbar.bg-travlr .nav-link.active { color: var(--travlr-amber); }
+
+.navbar-brand {
+  font-family: var(--travlr-display);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  font-weight: 700;
+}
+
+.btn-primary,
+.btn-info {
+  --bs-btn-bg: var(--travlr-teal-deep);
+  --bs-btn-border-color: var(--travlr-teal-deep);
+  --bs-btn-hover-bg: var(--travlr-teal);
+  --bs-btn-hover-border-color: var(--travlr-teal);
+  --bs-btn-active-bg: var(--travlr-teal);
+  --bs-btn-active-border-color: var(--travlr-teal);
+  --bs-btn-color: #fff;
+  --bs-btn-hover-color: #fff;
+  --bs-btn-active-color: #fff;
+}
+
+.card {
+  border: 1px solid #e6ddcf;
+  border-radius: 0.5rem;
+  overflow: hidden;
+  box-shadow: 0 2px 10px rgba(90, 69, 53, 0.08);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+.card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(90, 69, 53, 0.14);
+}
+.card-header {
+  background-color: var(--travlr-teal-deep);
+  color: #f3efe4;
+  font-family: var(--travlr-display);
+  letter-spacing: 0.02em;
+}
+.card-img-top { height: 200px; object-fit: cover; }
+.card-subtitle { color: var(--travlr-brown) !important; }
+
+.form-control:focus,
+.form-select:focus {
+  border-color: var(--travlr-teal);
+  box-shadow: 0 0 0 0.2rem rgba(44, 150, 136, 0.20);
+}
+form label { color: var(--travlr-brown); font-weight: 600; }
+
+.site-footer {
+  background-color: var(--travlr-sand);
+  border-top: 1px solid #cdbeb2;
+  color: var(--travlr-brown);
+  text-align: center;
+  padding: 1rem 0;
+  margin-top: 2rem;
+}
+.site-footer .copyright { margin: 0; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.03em; }

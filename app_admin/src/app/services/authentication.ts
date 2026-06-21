@@ -1,22 +1,24 @@
-import { Service } from '@angular/core';
 import { Inject, Injectable } from '@angular/core';
 import { BROWSER_STORAGE } from '../storage';
 import { User } from '../models/user';
 import { AuthResponse } from '../models/auth-response';
 import { TripDataService } from './trip-data';
 
-@Service()
+@Injectable({
+  providedIn: 'root'
+})
 export class Authentication {
-  Constructor(
+  constructor(
     @Inject(BROWSER_STORAGE) private storage: Storage,
     private tripDataService: TripDataService
   ) {}
-  authResp: AuthResponse = new AuthResponse;
+
+  authResp: AuthResponse = new AuthResponse();
 
   public getToken(): string {
     let out: any;
     out = this.storage.getItem('travlr-token');
-    if(!out) {
+    if (!out) {
       return '';
     }
     return out;
@@ -32,7 +34,7 @@ export class Authentication {
 
   public isLoggedIn(): boolean {
     const token: string = this.getToken();
-    if(token) {
+    if (token) {
       const payload = JSON.parse(atob(token.split('.')[1]));
       return payload.exp > (Date.now() / 1000);
     } else {
@@ -46,26 +48,11 @@ export class Authentication {
     return { email, name } as User;
   }
 
-  public login(user: User, passwd: string) : void {
+  public login(user: User, passwd: string): void {
     this.tripDataService.login(user, passwd)
       .subscribe({
-        if(value) {
-          console.log(value);
-          this.authResp = value;
-          this.saveToken(this.authResp.token);
-        },
-          error: (error: any) => {
-            console.log('Error: ' + error);
-          }
-        }
-      })
-  }
-
-  public register(user: User, passwd: string) : void {
-    this.tripDataService.register(user, passwd)
-      .subscribe({
         next: (value: any) => {
-          if(value) {
+          if (value) {
             console.log(value);
             this.authResp = value;
             this.saveToken(this.authResp.token);
@@ -74,7 +61,22 @@ export class Authentication {
         error: (error: any) => {
           console.log('Error: ' + error);
         }
-      })
+      });
   }
 
+  public register(user: User, passwd: string): void {
+    this.tripDataService.register(user, passwd)
+      .subscribe({
+        next: (value: any) => {
+          if (value) {
+            console.log(value);
+            this.authResp = value;
+            this.saveToken(this.authResp.token);
+          }
+        },
+        error: (error: any) => {
+          console.log('Error: ' + error);
+        }
+      });
+  }
 }

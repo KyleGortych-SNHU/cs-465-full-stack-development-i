@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { AuthenticationService } from '../services/authentication';
+import { Authentication } from '../services/authentication';
 import { User } from '../models/user';
 
 @Component({
@@ -19,7 +19,7 @@ export class Login {
 
   constructor(
     private router: Router,
-    private authenticationService: AuthenticationService
+    private authentication: Authentication
   ) {}
 
   ngOnInit(): void {}
@@ -43,15 +43,15 @@ export class Login {
     //console.log('LoginComponent::doLogin');
     //console.log(this.credentials);
     console.log(this.credentials);
-    this.authenticationService.login(newUser,
+    this.authentication.login(newUser,
       this.credentials.password);
 
-    if(this.authenticationService.isLoggedIn()) {
+    if(this.authentication.isLoggedIn()) {
       // console.log('Router::Direct');
       this.router.navigate(['']);
     } else {
       var timer = setTimeout(() => {
-        if(this.authenticationService.isLoggedIn()) {
+        if(this.authentication.isLoggedIn()) {
           // console.log('Router::Pause');
           this.router.navigate(['']);
         }

@@ -4,12 +4,9 @@
   "private": true,
   "scripts": {
     "start": "node ./bin/www",
-
     "test:unit": "mocha tests/unit/**/*.test.js",
     "test:integration": "mocha tests/integration/**/*.test.js",
-
     "test:e2e": "mocha tests/e2e/**/*.test.js",
-
     "ci:seed": "node app_api/models/seed.js"
   },
   "dependencies": {
@@ -27,5 +24,12 @@
     "morgan": "^1.10.1",
     "passport": "^0.7.0",
     "passport-local": "^1.0.0"
+  },
+  "devDependencies": {
+    "chai": "^6.2.2",
+    "mocha": "^11.7.6",
+    "mongodb-memory-server": "^11.2.0",
+    "sinon": "^22.0.0",
+    "supertest": "^7.2.2"
   }
 }

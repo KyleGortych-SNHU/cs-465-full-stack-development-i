@@ -53,17 +53,23 @@ docker compose up --build
 ### Screenshot of register endpoint
 
 <div align="center">
-  <img src="./register.png" width="100%" alt="img">
+  <img src="./screenshots/register.png" width="100%" alt="img">
 </div>
 
 ### Screenshot of login endpoint
 
 <div align="center">
-  <img src="./login.png" width="100%" alt="img">
+  <img src="./screenshots/login.png" width="100%" alt="img">
 </div>
 
 ### Screenshot of Verifying via Terminal
 
 <div align="center">
-  <img src="./curl_check_user.png" width="100%" alt="img">
+  <img src="./screenshots/curl_check_user.png" width="100%" alt="img">
+</div>
+
+### Screenshot of admin login page
+
+<div align="center">
+  <img src="./screenshots/admin.png" width="100%" alt="img">
 </div>

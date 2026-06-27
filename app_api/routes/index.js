@@ -23,6 +23,12 @@ const jwt = require('jsonwebtoken');
 const tripsController = require("../controllers/trips");
 const authController = require("../controllers/authentication")
 
+// rate limiter imports
+const { createRateLimiter } = require('../middleware/rateLimit');
+const authLimiter = createRateLimiter(10, 60*1000);
+const readLimiter = createRateLimiter(1000, 60*1000);
+const writeLimiter = createRateLimiter(100, 60*1000);
+
 // Method to authenticate our JWT
 function authenticateJWT(req, res, next) {
   // console.log('In Middleware');
@@ -59,10 +65,10 @@ function authenticateJWT(req, res, next) {
 }
 
 // route for register endpoint
-router.route("/register").post(authController.register);
+router.route("/register").post(authLimiter, authController.register);
 
 // route for login endpoint
-router.route("/login").post(authController.login);
+router.route("/login").post(authLimiter, authController.login);
 
 /**
  * Route: GET /trips
@@ -79,8 +85,8 @@ router.route("/login").post(authController.login);
  */
 router
     .route("/trips")
-    .get(tripsController.tripsList)
-    .post(authenticateJWT, tripsController.tripsAddTrip);
+    .get(readLimiter, tripsController.tripsList)
+    .post(authenticateJWT, writeLimiter, tripsController.tripsAddTrip);
 
 /**
  * Route: GET /trips/:tripCode
@@ -97,7 +103,7 @@ router
  */
 router
     .route("/trips/:tripCode")
-    .get(tripsController.tripsFindByCode)
-    .put(authenticateJWT, tripsController.tripsUpdateTrip);
+    .get(readLimiter, tripsController.tripsFindByCode)
+    .put(authenticateJWT, writeLimiter, tripsController.tripsUpdateTrip);
 
 module.exports = router;

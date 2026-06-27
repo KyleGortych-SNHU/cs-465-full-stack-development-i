@@ -67,4 +67,5 @@ connect();
 
 // Import Mongoose schema
 require('./travlr');
+require('./rateLimit');
 module.exports = mongoose;

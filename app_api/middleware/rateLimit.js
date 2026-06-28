@@ -23,7 +23,7 @@ async function checkRateLimit(identifier, maxRequests, windowMs) {
       $inc: { count: 1 },
       $setOnInsert: { expiresAt: new Date(windowStart + windowMs * 2) },
     },
-    { upsert: true, new: true }
+    { upsert: true, returnDocument: 'after' }
   );
 
   return {

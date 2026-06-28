@@ -2,11 +2,15 @@ const { expect } = require('chai');
 const sinon = require('sinon');
 const jwt = require('jsonwebtoken');
 const authenticateJWT = require('../../../app_api/middleware/authenticateJWT');
+const { json } = require('express');
 
 function mockRes() {
   return {
     statusCode: null,
+    body: null,
     sendStatus(code) { this.statusCode = code; return this; },
+    status(code) { this.statusCode = code; return this; },
+    json(payload) { this.body = payload; return this; },
   };
 }
 

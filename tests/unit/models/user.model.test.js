@@ -35,10 +35,14 @@ describe('User model', () => {
   });
 
   describe('schema validation', () => {
-    it('requires email and name', () => {
-      const err = new User().validateSync();
+    it('requires email and name', async () => {
+      const u = new User();
+      let err;
+      try { await u.validate(); } catch (e) { err = e; }
+      expect(err).to.exist;
       expect(err.errors).to.have.property('email');
       expect(err.errors).to.have.property('name');
     });
   });
+
 });

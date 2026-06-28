@@ -6,9 +6,9 @@
  * collection via mongoose models and return JSON responses.
  *
  *  Responsibilities:
- *    - fetches trip data from database
+ *    - fetch trip data from the database
  *    - format HTTP responses
- *    - return correct HTTP status
+ *    - return the correct HTTP status
  *
  *  Dependencies:
  *    - mongoose
@@ -16,34 +16,23 @@
  *    - express request & response objects
  *
  *  Routes:
- *    - GET /trips
- *
+ *    - GET  /trips           -> tripsList
+ *    - GET  /trips/:tripCode -> tripsFindByCode
+ *    - POST /trips           -> tripsAddTrip    (protected)
+ *    - PUT  /trips/:tripCode -> tripsUpdateTrip (protected)
  */
 
-
 const mongoose = require('mongoose');
-const Trip = require('../models/travlr'); // the register model
+const Trip = require('../models/travlr'); // registers the model
 const Model = mongoose.model('trips');
 
 /**
  * Lists all trips in the database.
  *
- * Preconditions:
- *   - req and res are valid Express request/response objects.
- *   - MongoDB connection has been established.
- *   - The "trips" model is registered with Mongoose.
- *
  * Postconditions:
- *   - Returns HTTP 200 and a JSON array of trips when records exist.
- *   - Returns HTTP 404 if no trip data is found.
+ *   - Returns HTTP 200 and a JSON array of trips (possibly empty).
+ *   - Returns HTTP 500 on a database/server error.
  *   - Response is sent exactly once.
- *
- * Exceptions:
- *   - TODO: Implement try/catch handling for database and 
- *     server errors and return HTTP 500 response.
- *
- * Side Effects:
- *   - Executes a database query against the trips collection.
  *
  * @async
  * @function tripsList
@@ -51,122 +40,78 @@ const Model = mongoose.model('trips');
  * @param {Object} res - Express response object.
  * @returns {Promise<void>}
  */
-// TODO: Add try/catch and return HTTP 500 for databased errors.
-const tripsList = async(req, res) => {
-  const q = await Model
-    .find({}) // no filter, return all records
-    .exec();
+const tripsList = async (req, res) => {
+  try {
+    const q = await Model
+      .find({}) // no filter, return all records
+      .exec();
 
-  // uncomment to see results of querey
-  // on the console
-  // console.log(q);
-  
-  // if database returns no data
-  // TODO: apply || q.length === 0 as .find({}) returns not null but empty array
-  if(!q) {
     return res
-        .status(404)
-        // TODO: replace with better error ahndling
-        // switch to .json({message: 'No trips found'})
-        .json(err); 
-  } else {
+      .status(200)
+      .json(q);
+  } catch (err) {
     return res
-        .status(200)
-        .json(q);
+      .status(500)
+      .json({ message: 'Error retrieving trips', error: err.message });
   }
 };
 
 /**
- * Similar to tripsList but, uses filter to,
- * GET /trip/:tripCode lists single trip 
- *
- * Preconditions:
- *   - req and res are valid Express request/response objects.
- *   - MongoDB connection has been established.
- *   - The "trips" model is registered with Mongoose.
+ * Returns a single trip matched by its trip code.
  *
  * Postconditions:
- *   - Returns HTTP 200 and a JSON array of trips when records exist.
- *   - Returns HTTP 404 if no trip data is found.
+ *   - Returns HTTP 200 and a JSON array containing the matching trip.
+ *   - Returns HTTP 404 when no trip matches the supplied code.
+ *   - Returns HTTP 500 on a database/server error.
  *   - Response is sent exactly once.
  *
- * Exceptions:
- *   - TODO: Implement try/catch handling for database and 
- *     server errors and return HTTP 500 response.
- *
- * Side Effects:
- *   - Executes a database query against the trips collection.
- *
  * @async
- * @function tripsList
+ * @function tripsFindByCode
  * @param {Object} req - Express request object.
  * @param {Object} res - Express response object.
  * @returns {Promise<void>}
  */
-const tripsFindByCode = async(req, res) => {
-  const q = await Model
-    .find({'code' : req.params.tripCode })
-    .exec();
+const tripsFindByCode = async (req, res) => {
+  try {
+    const q = await Model
+      .find({ code: req.params.tripCode })
+      .exec();
 
-  // uncomment to see results of querey
-  // on the console
-  // console.log(q);
-  
-  // if database returns no data
-  // TODO: apply || q.length === 0 as .find({}) returns not null but empty array
-  if(!q) {
-    return res
+    if (!q || q.length === 0) {
+      return res
         .status(404)
-        // TODO: replace with better error ahndling
-        // switch to .json({message: 'No trips found'})
-        .json(err); 
-  } else {
+        .json({ message: 'Trip not found' });
+    }
+
     return res
-        .status(200)
-        .json(q);
+      .status(200)
+      .json(q);
+  } catch (err) {
+    return res
+      .status(500)
+      .json({ message: 'Error retrieving trip', error: err.message });
   }
 };
 
-const tripsAddTrip = async(req, res) => {
-  const newTrip = new Trip({
-    code: req.body.code,
-    name: req.body.name,
-    length: req.body.length,
-    start: req.body.start,
-    resort: req.body.resort,
-    perPerson: req.body.perPerson,
-    image: req.body.image,
-    description: req.body.description
-  });
-
-  const q = await newTrip.save();
-
-  if(!q){
-    return res
-      .status(400)
-      .json(err)
-  } else {
-    return res
-      .status(201)
-      .json(q)
-  }
-
-  // test for results
-  // console.log(q);
-}
-
-// PUT: /trips/:tripCode - Adds a new Trip
-// Regardless of outcome, response must include HTML status
-// code
-// and JSON message to the requesting client
-const tripsUpdateTrip = async(req, res) => {
-  // Uncomment for debugging
-  //console.log(req.params);
-  //console.log(req.body);
-  const q = await Model
-  .findOneAndUpdate(
-    { 'code' : req.params.tripCode },
-    {
+/**
+ * Creates a new trip from the request body.
+ *
+ * Postconditions:
+ *   - Returns HTTP 201 and the created trip on success.
+ *   - Returns HTTP 400 on schema validation failure.
+ *   - Returns HTTP 409 when the trip code already exists (duplicate key).
+ *   - Returns HTTP 500 on any other database/server error.
+ *   - Response is sent exactly once.
+ *
+ * @async
+ * @function tripsAddTrip
+ * @param {Object} req - Express request object.
+ * @param {Object} res - Express response object.
+ * @returns {Promise<void>}
+ */
+const tripsAddTrip = async (req, res) => {
+  try {
+    const newTrip = new Trip({
       code: req.body.code,
       name: req.body.name,
       length: req.body.length,
@@ -175,19 +120,84 @@ const tripsUpdateTrip = async(req, res) => {
       perPerson: req.body.perPerson,
       image: req.body.image,
       description: req.body.description
-    })
-  .exec();
+    });
 
-  if(!q) { // Database returned no data
-  return res
-  .status(400)
-  .json(err);
-  } else { // Return resulting updated trip
+    const q = await newTrip.save();
+
     return res
-    .status(201)
-    .json(q);
+      .status(201)
+      .json(q);
+  } catch (err) {
+    if (err.name === 'ValidationError') {
+      return res
+        .status(400)
+        .json({ message: 'Invalid trip data', error: err.message });
+    }
+    if (err.code === 11000) {
+      return res
+        .status(409)
+        .json({ message: 'A trip with that code already exists' });
+    }
+    return res
+      .status(500)
+      .json({ message: 'Error creating trip', error: err.message });
   }
-  // console.log(q);
+};
+
+/**
+ * Updates an existing trip matched by its trip code.
+ *
+ * Postconditions:
+ *   - Returns HTTP 200 and the updated trip on success.
+ *   - Returns HTTP 404 when no trip matches the supplied code.
+ *   - Returns HTTP 400 on schema validation failure.
+ *   - Returns HTTP 500 on any other database/server error.
+ *   - Response is sent exactly once.
+ *
+ * @async
+ * @function tripsUpdateTrip
+ * @param {Object} req - Express request object.
+ * @param {Object} res - Express response object.
+ * @returns {Promise<void>}
+ */
+const tripsUpdateTrip = async (req, res) => {
+  try {
+    const q = await Model
+      .findOneAndUpdate(
+        { code: req.params.tripCode },
+        {
+          code: req.body.code,
+          name: req.body.name,
+          length: req.body.length,
+          start: req.body.start,
+          resort: req.body.resort,
+          perPerson: req.body.perPerson,
+          image: req.body.image,
+          description: req.body.description
+        },
+        { returnDocument: 'after', runValidators: true }
+      )
+      .exec();
+
+    if (!q) {
+      return res
+        .status(404)
+        .json({ message: 'Trip not found' });
+    }
+
+    return res
+      .status(200)
+      .json(q);
+  } catch (err) {
+    if (err.name === 'ValidationError') {
+      return res
+        .status(400)
+        .json({ message: 'Invalid trip data', error: err.message });
+    }
+    return res
+      .status(500)
+      .json({ message: 'Error updating trip', error: err.message });
+  }
 };
 
 module.exports = {

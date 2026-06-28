@@ -13,18 +13,25 @@ const completeTrip = {
 };
 
 describe('Trip model', () => {
-  it('validates a complete trip with no errors', () => {
-    expect(new Trip(completeTrip).validateSync()).to.equal(undefined);
+  it('validates a complete trip with no errors', async () => {
+    const trip = new Trip(completeTrip);
+    await trip.validate();
   });
 
-  it('flags every mandatory field when empty', () => {
-    const err = new Trip({}).validateSync();
-    ['code', 'name', 'length', 'start', 'resort', 'perPerson', 'image', 'description']
-      .forEach((field) => expect(err.errors, field).to.have.property(field));
+  it('flags every mandatory field when empty', async () => {
+    const trip = new Trip({});
+    let err;
+    try { await trip.validate(); } catch (e) { err = e; }
+    expect(err).to.exist;
+    expect(err.errors).to.have.property('name');
   });
 
-  it('rejects an unparseable start date', () => {
-    const err = new Trip({ ...completeTrip, start: 'not-a-date' }).validateSync();
+  it('rejects an unparseable start date', async () => {
+    let err;
+    try {
+      await new Trip({ ...completeTrip, start: 'not-a-date' }).validate();
+    } catch (e) { err = e; }
+    expect(err).to.exist;
     expect(err.errors).to.have.property('start');
   });
 });

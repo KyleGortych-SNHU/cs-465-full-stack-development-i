@@ -1,11 +1,10 @@
 name: Module 7 CI Entry Point
 
 on:
-  workflow_dispatch:
-  # push:
-  #   branches: [module7]
-  #   paths-ignore:
-  #     - 'README.md'
+  push:
+    branches: [module7]
+    paths-ignore:
+      - 'README.md'
 
 jobs:
   backend:
@@ -14,5 +13,5 @@ jobs:
   frontend:
     uses: ./.github/workflows/frontend.yml
 
-  docker:
-    uses: ./.github/workflows/docker.yml
+  #docker:
+  #  uses: ./.github/workflows/docker.yml

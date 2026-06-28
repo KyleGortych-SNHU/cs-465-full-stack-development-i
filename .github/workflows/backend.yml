@@ -8,9 +8,13 @@ jobs:
 
     runs-on: ubuntu-latest
 
+    env:
+      MONGO_URI: mongodb://127.0.0.1:27017/travlr_test
+      JWT_SECRET: test-secret-not-for-production
+
     services:
       mongodb:
-        image: mongo:7
+        image: mongo:8
         ports:
           - 27017:27017
 

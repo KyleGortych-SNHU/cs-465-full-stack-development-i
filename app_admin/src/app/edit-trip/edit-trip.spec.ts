@@ -7,6 +7,10 @@ describe('EditTrip', () => {
   let fixture: ComponentFixture<EditTrip>;
 
   beforeEach(async () => {
+    // Seed edit-trip so ngOnInit builds the form and follows the normal path.
+    // Router & HttpClient from the global providersFile.
+    localStorage.setItem('tripCode', 'TEST01');
+
     await TestBed.configureTestingModule({
       imports: [EditTrip],
     }).compileComponents();

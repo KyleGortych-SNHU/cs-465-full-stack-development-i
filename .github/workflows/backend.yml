@@ -17,6 +17,11 @@ jobs:
         image: mongo:8
         ports:
           - 27017:27017
+        options: >-
+          --health-cmd "mongosh --eval 'db.runCommand({ ping: 1 })'"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 10
 
     steps:
 
@@ -33,13 +38,8 @@ jobs:
         run: npm ci
 
 
-      - name: Wait for Mongo
-        run: |
-          for i in {1..30}; do
-            (echo > /dev/tcp/127.0.0.1/27017) && break
-            sleep 1
-          done
-
+      # Mongo readiness is gated by the service health-check above,
+      # so no manual wait loop is needed.
 
       - name: Seed database
         run: npm run ci:seed
@@ -60,4 +60,6 @@ jobs:
 
 
       - name: Smoke test
-        run: curl --fail http://127.0.0.1:3000/
+        run: |
+          curl --fail http://127.0.0.1:3000/
+          curl --fail http://127.0.0.1:3000/api/trips

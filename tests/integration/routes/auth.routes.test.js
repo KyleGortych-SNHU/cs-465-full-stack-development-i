@@ -1,5 +1,6 @@
 const request = require('supertest');
 const { expect } = require('chai');
+const jwt = require('jsonwebtoken');
 
 const makeApp = require('../../helpers/testServer');
 const db = require('../../helpers/dbSetup');
@@ -8,7 +9,11 @@ const User = require('../../../app_api/models/user');
 describe('Auth API routes', () => {
   let app;
 
-  before(async () => { await db.connect(); app = makeApp(); });
+  before(async () => {
+    await db.connect();
+    await User.init();
+    app = makeApp();
+  });
   afterEach(async () => { await db.clearDatabase(); });
   after(async () => { await db.closeDatabase(); });
 
@@ -32,6 +37,57 @@ describe('Auth API routes', () => {
       expect(saved).to.not.equal(null);
       expect(saved.hash).to.be.a('string').and.not.equal('Sand123!');
     });
+
+    it('returns 409 when the email is already registered', async () => {
+      const payload = { name: 'Dup', email: 'dup@travlr.test', password: 'Sand123!' };
+      await request(app).post('/api/register').send(payload);
+      const res = await request(app).post('/api/register').send(payload);
+      expect(res.status).to.equal(409);
+    });
+  });
+
+  describe('POST /api/register (roles)', () => {
+    it('defaults to role "user" when no admin code is given', async () => {
+      const res = await request(app).post('/api/register').send({
+        name: 'Plain User', email: 'plain@travlr.test', password: 'Sand123!'
+      });
+      expect(res.status).to.equal(200);
+
+      const saved = await User.findOne({ email: 'plain@travlr.test' });
+      expect(saved.role).to.equal('user');
+
+      const decoded = jwt.verify(res.body.token, process.env.JWT_SECRET);
+      expect(decoded.role).to.equal('user');
+    });
+
+    it('creates an admin when the correct admin code is supplied', async () => {
+      const res = await request(app).post('/api/register').send({
+        name: 'Admin User',
+        email: 'admin2@travlr.test',
+        password: 'Sand123!',
+        adminKey: process.env.ADMIN_REGISTRATION_KEY,
+      });
+      expect(res.status).to.equal(200);
+
+      const saved = await User.findOne({ email: 'admin2@travlr.test' });
+      expect(saved.role).to.equal('admin');
+
+      const decoded = jwt.verify(res.body.token, process.env.JWT_SECRET);
+      expect(decoded.role).to.equal('admin');
+    });
+
+    it('rejects an incorrect admin code with 403 and creates no user', async () => {
+      const res = await request(app).post('/api/register').send({
+        name: 'Bad Admin',
+        email: 'bad@travlr.test',
+        password: 'Sand123!',
+        adminKey: 'definitely-wrong',
+      });
+      expect(res.status).to.equal(403);
+
+      const saved = await User.findOne({ email: 'bad@travlr.test' });
+      expect(saved).to.equal(null);
+    });
   });
 
   describe('POST /api/login', () => {
@@ -52,6 +108,14 @@ describe('Auth API routes', () => {
       });
       expect(res.status).to.equal(200);
       expect(res.body).to.have.property('token').that.is.a('string');
+    });
+
+    it('embeds the user role in the issued token', async () => {
+      const res = await request(app).post('/api/login').send({
+        email: 'login@travlr.test', password: 'Sand123!'
+      });
+      const decoded = jwt.verify(res.body.token, process.env.JWT_SECRET);
+      expect(decoded.role).to.equal('user');
     });
 
     it('returns 401 for a wrong password', async () => {

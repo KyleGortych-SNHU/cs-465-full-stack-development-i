@@ -1,82 +1,102 @@
-import { Inject, Injectable } from '@angular/core';
+import { Inject, Injectable, signal } from '@angular/core';
+import { Observable, tap } from 'rxjs';
 import { BROWSER_STORAGE } from '../storage';
 import { User } from '../models/user';
 import { AuthResponse } from '../models/auth-response';
 import { TripDataService } from './trip-data';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class Authentication {
-  constructor(
-    @Inject(BROWSER_STORAGE) private storage: Storage,
-    private tripDataService: TripDataService
-  ) {}
+  private readonly token = signal<string>('');
 
   authResp: AuthResponse = new AuthResponse();
 
-  public getToken(): string {
-    let out: any;
-    out = this.storage.getItem('travlr-token');
-    if (!out) {
+  constructor(
+    @Inject(BROWSER_STORAGE) private storage: Storage,
+    private tripDataService: TripDataService
+  ) {
+    this.token.set(this.readStoredToken());
+  }
+
+  private readStoredToken(): string {
+    try {
+      return this.storage.getItem('travlr-token') ?? '';
+    } catch {
       return '';
     }
-    return out;
+  }
+
+  public getToken(): string {
+    return this.token();
   }
 
   public saveToken(token: string): void {
     this.storage.setItem('travlr-token', token);
+    this.token.set(token);
   }
 
   public logout(): void {
     this.storage.removeItem('travlr-token');
+    this.token.set('');
   }
 
-  public isLoggedIn(): boolean {
-    const token: string = this.getToken();
-    if (token) {
-      const payload = JSON.parse(atob(token.split('.')[1]));
-      return payload.exp > (Date.now() / 1000);
-    } else {
-      return false;
+  private decodeToken(): any | null {
+    const token = this.token();
+    if (!token) {
+      return null;
+    }
+    try {
+      return JSON.parse(atob(token.split('.')[1]));
+    } catch {
+      this.logout();
+      return null;
     }
   }
 
+  public isLoggedIn(): boolean {
+    const payload = this.decodeToken();
+    if (!payload) {
+      return false;
+    }
+    return payload.exp > Date.now() / 1000;
+  }
+
+  public isAdmin(): boolean {
+    const payload = this.decodeToken();
+    return this.isLoggedIn() && payload?.role === 'admin';
+  }
+
   public getCurrentUser(): User {
-    const token: string = this.getToken();
-    const { email, name } = JSON.parse(atob(token.split('.')[1]));
+    const payload = this.decodeToken();
+    const { email, name } = payload ?? {};
     return { email, name } as User;
   }
 
-  public login(user: User, passwd: string): void {
-    this.tripDataService.login(user, passwd)
-      .subscribe({
-        next: (value: any) => {
-          if (value) {
-            console.log(value);
-            this.authResp = value;
-            this.saveToken(this.authResp.token);
-          }
-        },
-        error: (error: any) => {
-          console.log('Error: ' + error);
+  public login(user: User, passwd: string): Observable<AuthResponse> {
+    return this.tripDataService.login(user, passwd).pipe(
+      tap((authResp: AuthResponse) => {
+        if (authResp && authResp.token) {
+          this.authResp = authResp;
+          this.saveToken(authResp.token);
         }
-      });
+      })
+    );
   }
 
-  public register(user: User, passwd: string): void {
-    this.tripDataService.register(user, passwd)
-      .subscribe({
-        next: (value: any) => {
-          if (value) {
-            console.log(value);
-            this.authResp = value;
-            this.saveToken(this.authResp.token);
-          }
-        },
-        error: (error: any) => {
-          console.log('Error: ' + error);
+  public register(
+    user: User,
+    passwd: string,
+    adminKey?: string
+  ): Observable<AuthResponse> {
+    return this.tripDataService.register(user, passwd, adminKey).pipe(
+      tap((authResp: AuthResponse) => {
+        if (authResp && authResp.token) {
+          this.authResp = authResp;
+          this.saveToken(authResp.token);
         }
-      });
+      })
+    );
   }
 }

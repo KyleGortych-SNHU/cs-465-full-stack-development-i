@@ -13,7 +13,7 @@ describe('Authentication controller (validation branches)', () => {
   afterEach(() => sinon.restore());
 
   it('register -> 400 when fields are missing', async () => {
-    const req = { body: { email: 'a@b.com' } }; // no name, password
+    const req = { body: { email: 'a@b.com' } };
     const res = mockRes();
 
     await authController.register(req, res);
@@ -22,8 +22,25 @@ describe('Authentication controller (validation branches)', () => {
     expect(res.json.firstCall.args[0]).to.have.property('message');
   });
 
+  it('register -> 403 when an incorrect admin code is supplied', async () => {
+    const req = {
+      body: {
+        name: 'Wrong Key',
+        email: 'wrongkey@travlr.test',
+        password: 'Sand123!',
+        adminKey: 'definitely-not-the-key',
+      },
+    };
+    const res = mockRes();
+
+    await authController.register(req, res);
+
+    expect(res.status.calledWith(403)).to.equal(true);
+    expect(res.json.firstCall.args[0]).to.have.property('message');
+  });
+
   it('login -> 400 when email or password is missing', () => {
-    const req = { body: { email: 'a@b.com' } }; // no password
+    const req = { body: { email: 'a@b.com' } };
     const res = mockRes();
 
     authController.login(req, res);

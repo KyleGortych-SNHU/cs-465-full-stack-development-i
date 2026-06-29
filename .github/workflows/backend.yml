@@ -11,6 +11,7 @@ jobs:
     env:
       MONGO_URI: mongodb://127.0.0.1:27017/travlr_test
       JWT_SECRET: test-secret-not-for-production
+      ADMIN_REGISTRATION_KEY: test-admin-key
 
     services:
       mongodb:
@@ -36,10 +37,6 @@ jobs:
 
       - name: Install dependencies
         run: npm ci
-
-
-      # Mongo readiness is gated by the service health-check above,
-      # so no manual wait loop is needed.
 
       - name: Seed database
         run: npm run ci:seed

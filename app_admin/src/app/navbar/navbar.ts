@@ -20,6 +20,10 @@ export class Navbar {
     return this.authenticationService.isLoggedIn();
   }
 
+  public getUsername(): string {
+    return this.authenticationService.getCurrentUser().name;
+  }
+
   public onLogout(): void {
     this.authenticationService.logout();
     this.router.navigate(['']);

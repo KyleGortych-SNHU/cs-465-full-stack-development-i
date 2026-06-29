@@ -15,9 +15,13 @@
            [routerLinkActiveOptions]="{ exact: true }">Trips</a>
       </div>
 
-      <div class="navbar-nav">
+      <div class="navbar-nav align-items-lg-center">
         <a class="nav-link" routerLink="login" routerLinkActive="active"
            *ngIf="!isLoggedIn()">Log In</a>
+
+        <span class="navbar-text me-lg-3" *ngIf="isLoggedIn()">
+          Signed in as {{ getUsername() }}
+        </span>
         <a class="nav-link" style="cursor: pointer;" (click)="onLogout()"
            *ngIf="isLoggedIn()">Log Out</a>
       </div>

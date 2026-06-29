@@ -19,9 +19,15 @@ const sampleTrip = {
 
 describe('Trips API routes', () => {
   let app;
-  let token;
+  let adminToken;
+  let userToken;
 
-  before(async () => { await db.connect(); app = makeApp(); token = makeToken(); });
+  before(async () => {
+    await db.connect();
+    app = makeApp();
+    adminToken = makeToken();
+    userToken = makeToken({ role: 'user', email: 'user@travlr.test' });
+  });
   afterEach(async () => { await db.clearDatabase(); });
   after(async () => { await db.closeDatabase(); });
 
@@ -51,16 +57,25 @@ describe('Trips API routes', () => {
     });
   });
 
-  describe('POST /api/trips (protected)', () => {
+  describe('POST /api/trips (admin only)', () => {
     it('returns 401 without a token', async () => {
       const res = await request(app).post('/api/trips').send(sampleTrip);
       expect(res.status).to.equal(401);
     });
 
-    it('returns 201 and persists the trip with a valid token', async () => {
+    it('returns 403 for a non-admin token', async () => {
       const res = await request(app)
         .post('/api/trips')
-        .set('Authorization', `Bearer ${token}`)
+        .set('Authorization', `Bearer ${userToken}`)
+        .send(sampleTrip);
+      expect(res.status).to.equal(403);
+      expect(await Trip.countDocuments()).to.equal(0);
+    });
+
+    it('returns 201 and persists the trip with an admin token', async () => {
+      const res = await request(app)
+        .post('/api/trips')
+        .set('Authorization', `Bearer ${adminToken}`)
         .send(sampleTrip);
 
       expect(res.status).to.equal(201);
@@ -68,17 +83,29 @@ describe('Trips API routes', () => {
     });
   });
 
-  describe('PUT /api/trips/:tripCode (protected)', () => {
+  describe('PUT /api/trips/:tripCode (admin only)', () => {
     it('returns 401 without a token', async () => {
       const res = await request(app).put('/api/trips/REEF01').send(sampleTrip);
       expect(res.status).to.equal(401);
     });
 
-    it('updates an existing trip with a valid token', async () => {
+    it('returns 403 for a non-admin token', async () => {
       await Trip.create(sampleTrip);
       const res = await request(app)
         .put('/api/trips/REEF01')
-        .set('Authorization', `Bearer ${token}`)
+        .set('Authorization', `Bearer ${userToken}`)
+        .send({ ...sampleTrip, name: 'Should Not Save' });
+
+      expect(res.status).to.equal(403);
+      const unchanged = await Trip.findOne({ code: 'REEF01' });
+      expect(unchanged.name).to.equal('Reef & Sand Escape');
+    });
+
+    it('updates an existing trip with an admin token', async () => {
+      await Trip.create(sampleTrip);
+      const res = await request(app)
+        .put('/api/trips/REEF01')
+        .set('Authorization', `Bearer ${adminToken}`)
         .send({ ...sampleTrip, name: 'Reef & Sand DELUXE' });
 
       expect(res.status).to.be.oneOf([200, 201]);

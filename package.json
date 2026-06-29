@@ -4,9 +4,14 @@
   "private": true,
   "scripts": {
     "start": "node ./bin/www",
-    "test:unit": "mocha tests/unit/**/*.test.js",
-    "test:integration": "mocha tests/integration/**/*.test.js",
-    "test:e2e": "mocha tests/e2e/**/*.test.js",
+    "test": "npm run test:unit && npm run test:integration",
+    "test:unit": "mocha \"tests/unit/**/*.test.js\" --exit",
+    "test:integration": "mocha \"tests/integration/**/*.test.js\" --exit",
+    "test:smoke": "mocha \"tests/smoke/**/*.test.js\" --exit",
+    "test:e2e": "mocha \"tests/e2e/**/*.test.js\" --exit",
+    "test:backend": "npm run test:unit && npm run test:integration && npm run test:smoke",
+    "test:frontend": "npm --prefix app_admin test",
+    "test:all": "npm run test:backend && npm run test:frontend",
     "ci:seed": "node app_api/models/seed.js"
   },
   "dependencies": {
@@ -30,6 +35,7 @@
     "mocha": "^11.7.6",
     "mongodb-memory-server": "^11.2.0",
     "sinon": "^22.0.0",
-    "supertest": "^7.2.2"
+    "supertest": "^7.2.2",
+    "wait-on": "^8.0.0"
   }
 }

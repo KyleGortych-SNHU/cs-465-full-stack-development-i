@@ -73,3 +73,16 @@ docker compose up --build
 <div align="center">
   <img src="./screenshots/admin.png" width="100%" alt="img">
 </div>
+
+
+### Screenshot of browser console debugging
+
+<div align="center">
+  <img src="./screenshots/debug.png" width="100%" alt="img">
+</div>
+
+### Screenshot of admin successfully logged in
+
+<div align="center">
+  <img src="./screenshots/admin_loggedin.png" width="100%" alt="img">
+</div>

@@ -36,43 +36,54 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 // Initialize passport module
-app.use(express.static(path.join(__dirname, 'public')));
 app.use(passport.initialize());
 
-// enable CORS Cross Origin Resource Sharing
+// enable CORS Cross-Origin Resource Sharing for the Angular SPA
 app.use('/api', (req, res, next) => {
   res.header('Access-Control-Allow-Origin', 'http://localhost:4200');
-  res.header('Access-Control-Allow-Headers', 
-    'Origin, X-Requested-With, Content-Type, Accept', 'Authorization');
-  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
-  next();
-});
+  res.header(
+    'Access-Control-Allow-Headers',
+    'Origin, X-Requested-With, Content-Type, Accept, Authorization'
+  );
+  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
 
-app.use((err, req, res, next) =>{
-  if(err.name === 'UnauthorizedError') {
-    res
-    .status(401)
-    .json({"message": err.name + ": " + err.message});
+  // Answer the preflight immediately with a 204 to prevent OPTIONS
+  // request falling through to the 404 handler which blocks real POST, PUT, and DELETE.
+  if (req.method === 'OPTIONS') {
+    return res.sendStatus(204);
   }
+  next();
 });
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/travel', travelRouter);
-app.use('/api', apiRouter); // wires up API routes
+app.use('/api', apiRouter);
 
 // for git action CI testing
 app.get('/health', (req, res) => {
   res.json({ status: 'ok' });
 });
 
+// Convert express-jwt auth failures into a 401 JSON response.
+// Comes after the routes so it can catch errors thrown. 
+// Must forward anything that isn't an auth error to the error handler below.
+app.use((err, req, res, next) => {
+  if (err.name === 'UnauthorizedError') {
+    return res
+      .status(401)
+      .json({ message: err.name + ': ' + err.message });
+  }
+  next(err);
+});
+
 // catch 404 and forward to error handler
-app.use(function(req, res, next) {
+app.use(function (req, res, next) {
   next(createError(404));
 });
 
 // error handler
-app.use(function(err, req, res, next) {
+app.use(function (err, req, res, next) {
   // set locals, only providing error in development
   res.locals.message = err.message;
   res.locals.error = req.app.get('env') === 'development' ? err : {};

@@ -13,7 +13,7 @@ describe('JwtInterceptor', () => {
   };
 
   beforeEach(() => {
-    // Mock Authentication so the test doesn't pull in TripDataService -> HttpClient.
+    // Mock Authentication
     auth = {
       isLoggedIn: vi.fn().mockReturnValue(false),
       getToken: vi.fn().mockReturnValue('test-token'),
@@ -59,24 +59,30 @@ describe('JwtInterceptor', () => {
   it('does not attach a token on auth routes (login/register)', () => {
     auth.isLoggedIn.mockReturnValue(true);
 
-    const request = new HttpRequest('POST', 'login', {});
-    const { ref, next } = captureHandler();
+    for (const url of [
+      'http://localhost:3000/api/login',
+      'http://localhost:3000/api/register',
+    ]) {
+      const request = new HttpRequest('POST', url, {});
+      const { ref, next } = captureHandler();
 
-    interceptor.intercept(request, next).subscribe();
+      interceptor.intercept(request, next).subscribe();
 
-    expect(ref.forwarded?.headers.has('Authorization')).toBe(false);
+      expect(ref.forwarded?.headers.has('Authorization')).toBe(false);
+    }
   });
 
   it('attaches an Authorization header when logged in on a non-auth route', () => {
     auth.isLoggedIn.mockReturnValue(true);
     auth.getToken.mockReturnValue('test-token');
 
-    const request = new HttpRequest('GET', '/api/trips');
+    const request = new HttpRequest('GET', 'http://localhost:3000/api/trips');
     const { ref, next } = captureHandler();
 
     interceptor.intercept(request, next).subscribe();
 
     expect(ref.forwarded).not.toBe(request);
     expect(ref.forwarded?.headers.has('Authorization')).toBe(true);
+    expect(ref.forwarded?.headers.get('Authorization')).toBe('Bearer test-token');
   });
 });

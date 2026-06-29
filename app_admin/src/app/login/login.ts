@@ -1,61 +1,55 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { Authentication } from '../services/authentication';
 import { User } from '../models/user';
 
 @Component({
   selector: 'app-login',
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, RouterLink],
   templateUrl: './login.html',
   styleUrl: './login.css',
 })
-
 export class Login {
   public formError: string = '';
-  submitted = false;
-  credentials = {name: '', email: '', password: ''}
+  public isSubmitting = false;
+  credentials = { name: '', email: '', password: '' };
 
   constructor(
     private router: Router,
     private authentication: Authentication
   ) {}
 
-  ngOnInit(): void {}
-
   public onLoginSubmit(): void {
     this.formError = '';
-    if (!this.credentials.email || !this.credentials.password ||
-        !this.credentials.name) {
-      this.formError = 'All fields are required, please try again';
-    this.router.navigateByUrl('#'); // Return to login page
-    } else {
-      this.doLogin();
+    if (!this.credentials.email || !this.credentials.password) {
+      this.formError = 'Email and password are required, please try again';
+      return;
     }
+    this.doLogin();
   }
 
   private doLogin(): void {
-    let newUser = {
+    const newUser = {
       name: this.credentials.name,
-      email: this.credentials.email
+      email: this.credentials.email,
     } as User;
-    //console.log('LoginComponent::doLogin');
-    //console.log(this.credentials);
-    console.log(this.credentials);
-    this.authentication.login(newUser,
-      this.credentials.password);
 
-    if(this.authentication.isLoggedIn()) {
-      // console.log('Router::Direct');
-      this.router.navigate(['']);
-    } else {
-      var timer = setTimeout(() => {
-        if(this.authentication.isLoggedIn()) {
-          // console.log('Router::Pause');
-          this.router.navigate(['']);
-        }
-      },3000);
-    }
+    this.formError = '';
+    this.isSubmitting = true;
+
+    this.authentication.login(newUser, this.credentials.password).subscribe({
+      next: () => {
+        this.isSubmitting = false;
+        this.router.navigate(['']);
+      },
+      error: (err: any) => {
+        this.isSubmitting = false;
+        this.formError =
+          err?.error?.message ||
+          'Login failed. Please check your credentials and try again.';
+      },
+    });
   }
 }
